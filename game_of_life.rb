@@ -47,6 +47,10 @@ class Cell
     !world.cells.include?(self)   # world does not include this instance?
   end
 
+  def alive?
+    world.cells.include?(self)   #world does include this instance?
+  end
+
   def spawn_at(x, y)
     Cell.new(world, x, y)
   end
@@ -70,6 +74,8 @@ class World
   def next_frame!
     cells.each do |cell|
       if cell.neighbors.count < 2
+        cell.die!
+      elsif cell.neighbors.count > 3
         cell.die!
       end
     end

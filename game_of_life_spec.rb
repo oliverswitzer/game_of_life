@@ -55,7 +55,7 @@ describe "game of life" do
       subject.die!
       world.cells.should_not include(subject)
     end
-    
+
   end
 
   it "Rule 1: Any live cell with fewer than two live neighbours dies, as if caused by under-population." do
@@ -65,4 +65,39 @@ describe "game of life" do
     world.next_frame!
     cell.should be_dead
   end
+
+  it "Rule 2: Any live cell with two or three live neighbours lives on to the next generation." do
+    cell = Cell.new(world)
+    new_cell0 = cell.spawn_at(1, 0)
+    new_cell1 = cell.spawn_at(1, 1)
+    cell.neighbors.count.should == 2
+    world.next_frame!
+    cell.should be_alive
+  end
+
+  it "Rule 3: Any live cell with more than three live neighbours dies, as if by overcrowding." do
+    cell = Cell.new(world)
+    new_cell0 = cell.spawn_at(1,0)
+    new_cell1 = cell.spawn_at(1, 1)  
+    new_cell2 = cell.spawn_at(1, -1)
+    new_cell3 = cell.spawn_at(-1, 0)
+    cell.neighbors.count.should == 4
+    world.next_frame!
+    cell.should be_dead
+  end
+
+  it "Rule 4: Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction." do
+    cell = Cell.new(world)
+    new_cell0 = cell.spawn_at(1,0) 
+    new_cell1 = cell.spawn_at(1, 1)  
+    new_cell2 = cell.spawn_at(1, -1)
+    cell.neighbors.count.should == 3
+    world.next_frame!
+    cell.should be_alive
+  end
 end
+
+
+
+
+
