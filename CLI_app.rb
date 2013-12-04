@@ -15,27 +15,60 @@ class App
 
 
   def print_world
+    puts
+    puts "-"*22 + "y-axis" + "-"*25 + ">"
     world.graph.each do |x|
       puts
       x.each do |cell|
         if cell.alive? 
-          print "*"
+          print " * "
         else
-          print "."
+          print " . "
         end
-        # print "(#{cell.x}, #{cell.y}) "
       end
     end
     puts
   end
 
+  def blinker
+    world.birth_cell(10, 9)
+    world.birth_cell(10, 10)
+    world.birth_cell(10, 11)
+  end
+
+  def pulsar
+    world.birth_cell(10, 7)
+    world.birth_cell(9, 8)
+    world.birth_cell(11, 8)
+    world.birth_cell(9, 9)
+    world.birth_cell(11, 9)
+    world.birth_cell(10, 10)
+    world.birth_cell(9, 11)
+    world.birth_cell(11, 11)
+    world.birth_cell(9, 12)
+    world.birth_cell(11, 12)
+    world.birth_cell(10, 13)
+  end
+
+  def random
+    rand(1..world.size**2).times do 
+      world.birth_cell(rand(0..world.size-1), rand(0..world.size-1))
+    end
+  end
+
+  def glider
+    #currently doesn't work!
+    world.birth_cell(9, 9)
+    world.birth_cell(9, 10)
+    world.birth_cell(9, 11)
+    world.birth_cell(10, 11)
+    world.birth_cell(11, 10)
+  end
 
   def run
-    world.graph[9][10].alive = true
-    world.graph[10][10].alive = true
-    world.graph[11][10].alive = true
-    10.times do |i|
-      sleep(0.4)  
+    random
+    loop do |i|
+      sleep(0.1)  
       puts "frame #{i}"
       print_world
       world.next_frame!

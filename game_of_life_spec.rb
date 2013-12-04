@@ -8,7 +8,6 @@ describe "game of life" do
   let(:world) { World.new.tap {|world| world.size = 20} }
 
   context "cell utility methods" do
-    # debugger
     subject { world.graph[10][10].tap {|cell| cell.alive = true} }
     it "should spawn another cell relative to itself" do
       cell = subject.spawn_at(11,12)
@@ -56,6 +55,24 @@ describe "game of life" do
 
   end
 
+  context "world utility methods" do
+    it "cell_at should return the cell at x-y coords specified" do
+      world.cell_at(10, 10).should == world.graph[10][10]
+    end
+
+    it "a new world should populate itself with dead cells" do 
+      world.cells.should_not be_empty 
+      world.cells.count.should == world.size**2
+      world.cells.all? {|cell| cell.alive? == false}.should be_true
+    end
+
+    it "a world can birth a cell at any place in the world" do 
+      world.birth_cell(10, 10)
+      world.graph[10][10].should be_alive
+    end
+
+  end
+
   it "Rule 1: Any live cell with fewer than two live neighbours dies, as if caused by under-population." do
     cell = world.graph[10][10].tap {|cell| cell.alive = true}
     cell.spawn_at(12, 0)
@@ -95,11 +112,20 @@ describe "game of life" do
     cell.should be_alive
   end
 
-  it "A new world should populate itself with dead cells" do 
-    new_world = World.new
-    new_world.cells.should_not be_empty 
-    new_world.cells.count.should == new_world.size**2
-    new_world.cells.all? {|cell| cell.alive? == false}.should be_true
+
+  it "Game can make a blinker oscillator" do
+    world.birth_cell(10, 9)
+    world.birth_cell(10, 10)
+    world.birth_cell(10, 11)
+    world.next_frame!
+    world.cell_at(11, 10).should be_alive
+    world.cell_at(10, 10).should be_alive
+    world.cell_at(9, 10).should be_alive
+    world.next_frame!
+    world.cell_at(10, 9).should be_alive
+    world.cell_at(10, 10).should be_alive
+    world.cell_at(10, 11).should be_alive
+
   end
 
 end
