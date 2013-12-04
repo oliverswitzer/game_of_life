@@ -16,7 +16,6 @@ class App
 
   def print_world
     puts
-    puts "-"*22 + "y-axis" + "-"*25 + ">"
     world.graph.each do |x|
       puts
       x.each do |cell|
@@ -65,10 +64,59 @@ class App
     world.birth_cell(11, 10)
   end
 
+  def set_game
+    puts "Experiment with Conway's Game of Life! Would you like to start with an oscillator\nor a random board?"
+    puts "---------------------"
+    puts "\t+Type 'rand' for a random generation of cells"
+    puts "\t+Type 'blinker' to generate a blinker oscillator"
+    puts "\t+Type 'pulsar' to generate a pulsar oscillator"
+    inp = gets.chomp.downcase
+    unless ['rand', 'blinker', 'pulsar'].include? inp
+      puts "*** Input not recognized! ***"
+      set_game
+    end
+    return inp
+  end
+
+  def set_frame_rate
+    puts "---------------------"
+    puts "What frame rate would you like to run your game at? (Type in the number assosciated with the frame rate)"
+    puts "---------------------"
+    puts "\t[1] - 1 Second/Frame"
+    puts "\t[2] - 0.5 Second/Frame"
+    puts "\t[3] - 0.1 Second/Frame"
+    inp = Integer(gets) rescue nil
+    if inp.nil? || inp.to_i > 3 || inp.to_i < 1
+      set_frame_rate
+      "You either didn't enter an integer or the number you entered didn't correspond to a frame rate."
+    end
+
+    case inp 
+    when 1
+      1
+    when 2
+      0.5
+    when 3
+      0.1
+    end
+  end
+
+
+
   def run
-    random
+    game_type = set_game
+    frame_rate = set_frame_rate
+    case game_type
+    when 'rand'
+      random
+    when 'blinker'
+      blinker
+    when 'pulsar'
+      pulsar
+    end
+  
     loop do |i|
-      sleep(0.1)  
+      sleep(frame_rate)  
       puts "frame #{i}"
       print_world
       world.next_frame!
@@ -77,7 +125,6 @@ class App
 end
 
 app = App.new
-app.world.graph[10][10].alive = true
 app.run
 
 # app.run

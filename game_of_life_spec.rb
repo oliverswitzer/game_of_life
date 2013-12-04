@@ -125,7 +125,6 @@ describe "game of life" do
     world.cell_at(10, 9).should be_alive
     world.cell_at(10, 10).should be_alive
     world.cell_at(10, 11).should be_alive
-
   end
 
 end
