@@ -1,62 +1,78 @@
 #game_of_life.rb
 
+require 'awesome_print'
+require 'debugger'
+
+
+# How can you implement the fourth rule of Game of Life without keeping track of all the dead cells? 
+# if the world doesn't care about dead cells and only tracks alive ones, how will it know when a dead 
+# cell is to become alive when it has exactly three neighbors.
+
 class Cell
 
-  attr_accessor :x, :y, :world 
+  attr_accessor :x, :y, :world, :alive 
 
   def initialize(world, x=0,y=0)
     @x = x
     @y = y
     @world = world
+    @alive = false
     world.cells << self
   end
 
   def neighbors
     @neighbors = []
     world.cells.each do |cell|
-      # Check for North neighbor
-      if cell.x == self.x && cell.y == self.y + 1
-        @neighbors << cell
-      # Check for North East neighbor
-      elsif cell.x == self.x + 1 && cell.y == self.y + 1
-        @neighbors << cell
-      # East neighbor
-      elsif cell.x == self.x + 1 && cell.y == self.y
-        @neighbors << cell
-      # South East neighbor
-      elsif cell.x == self.x + 1 && cell.y == self.y - 1
-        @neighbors << cell
-      # South neighbor
-      elsif cell.x == self.x && cell.y == self.y - 1
-        @neighbors << cell
-      # South West neighbor
-      elsif cell.x == self.x - 1 && cell.y == self.y - 1
-        @neighbors << cell
-      # West neighbor
-      elsif cell.x == self.x - 1 && cell.y == self.y
-        @neighbors << cell
-      # North West nieghbor
-      elsif cell.x == self.x - 1 && cell.y == self.y + 1
-        @neighbors << cell
+      if cell.alive?
+        # Check for North neighbor
+        if cell.x == self.x && cell.y == self.y + 1
+          @neighbors << cell
+        # Check for North East neighbor
+        elsif cell.x == self.x + 1 && cell.y == self.y + 1
+          @neighbors << cell
+        # East neighbor
+        elsif cell.x == self.x + 1 && cell.y == self.y
+          @neighbors << cell
+        # South East neighbor
+        elsif cell.x == self.x + 1 && cell.y == self.y - 1
+          @neighbors << cell
+        # South neighbor
+        elsif cell.x == self.x && cell.y == self.y - 1
+          @neighbors << cell
+        # South West neighbor
+        elsif cell.x == self.x - 1 && cell.y == self.y - 1
+          @neighbors << cell
+        # West neighbor
+        elsif cell.x == self.x - 1 && cell.y == self.y
+          @neighbors << cell
+        # North West nieghbor
+        elsif cell.x == self.x - 1 && cell.y == self.y + 1
+          @neighbors << cell
+        end
       end
     end
     @neighbors
   end
 
   def dead?
-    !world.cells.include?(self)   # world does not include this instance?
+    !@alive   # world does not include this instance?
   end
 
   def alive?
-    world.cells.include?(self)   #world does include this instance?
+    @alive   #world does include this instance?
   end
 
   def spawn_at(x, y)
-    Cell.new(world, x, y)
+    world.graph[x][y].alive = true
+    return world.graph[x][y]
   end
 
-  def die! 
-    world.cells.delete_if {|cell| cell == self}
+  def die!
+    @alive = false 
+  end
+
+  def birth!
+    @alive = true
   end
 
 end
@@ -65,21 +81,36 @@ end
 
 class World
 
-  attr_accessor :cells
+  attr_accessor :cells, :size, :graph
 
   def initialize
+    @size = 20
     @cells = []
+    @graph = []
+    populate
   end
 
-  def next_frame!
-    cells.each do |cell|
-      if cell.neighbors.count < 2
-        cell.die!
-      elsif cell.neighbors.count > 3
-        cell.die!
+
+  def populate
+    size.times do |x|
+      @graph << []
+      size.times do |y|
+        @graph[x] << Cell.new(self, x, y)
       end
     end
   end
 
 
+  def next_frame!
+    cells.each do |cell|
+      if cell.dead? && cell.neighbors.count == 3
+        cell.birth!
+      elsif cell.alive? && cell.neighbors.count < 2
+        cell.die!
+      elsif cell.alive? && cell.neighbors.count > 3
+        cell.die!
+      end
+    end
+  end
 end
+
