@@ -7,7 +7,7 @@ class GameOfLifeWindow < Gosu::Window
 
   attr_accessor :size
   
-  def initialize(size = 800)
+  def initialize(size = 400)
 
     @size = size
 
