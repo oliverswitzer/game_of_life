@@ -6,13 +6,9 @@ class App
 
   attr_accessor :world
 
-  def initialize
-    @world = World.new
+  def initialize(size=20)
+    @world = World.new(size)
   end
-
-  # def randomly_populate
-
-
 
   def print_world
     puts
@@ -49,7 +45,7 @@ class App
     world.birth_cell(10, 13)
   end
 
-  def random
+  def randomly_populate
     rand(1..world.size**2).times do 
       world.birth_cell(rand(0..world.size-1), rand(0..world.size-1))
     end
@@ -67,7 +63,7 @@ class App
   def set_game
     puts "Experiment with Conway's Game of Life! Would you like to start with an oscillator\nor a random board?"
     puts "---------------------"
-    puts "\t+Type 'rand' for a random generation of cells"
+    puts "\t+Type 'rand' for a random population of cells"
     puts "\t+Type 'blinker' to generate a blinker oscillator"
     puts "\t+Type 'pulsar' to generate a pulsar oscillator"
     inp = gets.chomp.downcase
@@ -101,14 +97,12 @@ class App
     end
   end
 
-
-
   def run
     game_type = set_game
     frame_rate = set_frame_rate
     case game_type
     when 'rand'
-      random
+      randomly_populate
     when 'blinker'
       blinker
     when 'pulsar'
@@ -124,7 +118,7 @@ class App
   end
 end
 
-app = App.new
-app.run
+# app = App.new
+# app.run
 
 # app.run

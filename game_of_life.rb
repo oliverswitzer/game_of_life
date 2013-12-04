@@ -83,8 +83,8 @@ class World
 
   attr_accessor :cells, :size, :graph
 
-  def initialize
-    @size = 20
+  def initialize(size=20)
+    @size = size
     @cells = []
     @graph = []
     populate
